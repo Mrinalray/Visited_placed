@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visited Placed</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #0d1117;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial;
+            color: #e6edf3;
+        }
+
+        .post {
+            max-width: 500px;
+            margin: 0 auto;
+            padding-top: 25px;
+        }
+
+        .place-name {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .frame {
+            width: 100%;
+            aspect-ratio: 4/5;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .track {
+            height: 100%;
+            display: flex;
+            transition: transform 0.35s ease;
+        }
+
+        .item {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        img,
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .counter {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: rgba(0, 0, 0, 0.55);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            background: rgba(0, 0, 0, 0.25);
+            border: none;
+            color: #fff;
+            width: 45px;
+            height: 60px;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .left {
+            left: 5px;
+        }
+
+        .right {
+            right: 5px;
+        }
+
+        .sound {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            background: rgba(0, 0, 0, 0.45);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.3rem;
+        }
+
+        .thumb-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 12px;
+            overflow-x: auto;
+        }
+
+        .thumb {
+            width: 55px;
+            height: 55px;
+            border-radius: 6px;
+            cursor: pointer;
+            object-fit: cover;
+            border: 2px solid transparent;
+        }
+
+        .thumb.active {
+            border-color: #58a6ff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="post">
+
+        <div class="place-name">Darjeeling</div>
+
+        <div class="frame">
+            <div class="track">
+
+                <!-- SLIDE 0 -->
+                <div class="item">
+                    <img src="image01.jpg">
+                    <audio src="music1.mp3"></audio>
+                </div>
+
+                <!-- SLIDE 1 -->
+                <div class="item">
+                    <img src="image02.jpg">
+                    <audio src="music2.mp3"></audio>
+                </div>
+
+                <!-- SLIDE 2 -->
+                <div class="item">
+                    <img src="image3.jpg">
+                    <audio src="music3.mp3"></audio>
+                </div>
+
+                <!-- SLIDE 3 -->
+                <div class="item">
+                    <img src="image4.jpg">
+                    <audio src="music4.mp3"></audio>
+                </div>
+                <!-- SLIDE 4 -->
+                <div class="item">
+                    <img src="image5.jpg">
+                    <audio src="music2.mp3"></audio>
+                </div>
+                <!-- SLIDE 5 -->
+                <div class="item">
+                    <img src="image6.jpg" >
+                    <audio src="music2.mp3"></audio>
+                </div>
+                <!-- SLIDE 6 -->
+                <div class="item">
+                    <img src="image7.jpg">
+                    <audio src="music6.mp3"></audio>
+                </div>
+               
+
+
+
+            </div>
+
+            <div class="counter">1 / 4</div>
+
+            <button class="nav left">‹</button>
+            <button class="nav right">›</button>
+            <div class="sound">🔈</div>
+        </div>
+
+        <!-- FIXED THUMBNAILS -->
+        <div class="thumb-row">
+            <img class="thumb" src="image01.jpg" data-index="0">
+            <img class="thumb" src="image02.jpg" data-index="1">
+            <img class="thumb" src="image3.jpg" data-index="2">
+            <img class="thumb" src="image4.jpg" data-index="3">
+            <img class="thumb" src="image5.jpg" data-index="4">
+            <img class="thumb" src="image6.jpg" data-index="5">
+            <img class="thumb" src="image7.jpg" data-index="6">
+           
+        </div>
+
+    </div>
+
+    <script>
+        let idx = 0;
+
+        const track = document.querySelector(".track");
+        const items = document.querySelectorAll(".item");
+        const thumbs = document.querySelectorAll(".thumb");
+        const counter = document.querySelector(".counter");
+        const left = document.querySelector(".left");
+        const right = document.querySelector(".right");
+        const sound = document.querySelector(".sound");
+
+        function stopAllAudio() {
+            items.forEach(it => {
+                const a = it.querySelector("audio");
+                if (a) {
+                    a.pause();
+                    a.currentTime = 0;
+                }
+            });
+        }
+
+        function update() {
+            track.style.transform = `translateX(-${idx * 100}%)`;
+
+            counter.textContent = `${idx + 1} / ${items.length}`;
+
+            /* highlight thumb */
+            thumbs.forEach(t => t.classList.remove("active"));
+            thumbs[idx].classList.add("active");
+
+            stopAllAudio();
+
+            const aud = items[idx].querySelector("audio");
+            if (aud) {
+                aud.play();
+                aud.muted = sound.classList.contains("muted");
+            }
+        }
+
+        right.addEventListener("click", () => { idx = (idx + 1) % items.length; update(); });
+        left.addEventListener("click", () => { idx = (idx - 1 + items.length) % items.length; update(); });
+
+        thumbs.forEach(t => {
+            t.addEventListener("click", () => {
+                idx = Number(t.dataset.index);
+                update();
+            });
+        });
+
+        sound.addEventListener("click", () => {
+            sound.classList.toggle("muted");
+            const aud = items[idx].querySelector("audio");
+            if (aud) {
+                aud.muted = sound.classList.contains("muted");
+            }
+            sound.textContent = sound.classList.contains("muted") ? "🔇" : "🔈";
+        });
+
+        update();
+    </script>
+
+</body>
+
+</html>
